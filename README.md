@@ -2,6 +2,8 @@
 
 中文 Telegram RSS 机器人 [@RustRssBot](http://t.me/RustRssBot)
 
+*Fork 声明：* 本仓库暂且旨在满足 fork 者个人的需求，请谨慎使用。
+
 **支持:**
  - [x] RSS 0.9
  - [x] RSS 0.91
