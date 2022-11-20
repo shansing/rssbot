@@ -80,7 +80,7 @@ pub fn send_multiple_messages<'a>(
     futures::stream::iter_ok(messages).for_each(move |msg| {
         bot.message(target, msg)
             .parse_mode("HTML")
-            .disable_web_page_preview(true)
+            .disable_web_page_preview(false)
             .send()
             .map(|_| ())
     })
@@ -98,7 +98,21 @@ pub fn format_and_split_msgs<T, F>(head: String, data: &[T], line_format_fn: F) 
 where
     F: Fn(&T) -> String,
 {
-    let mut msgs = vec![head];
+let mut msgs = vec![];
+if head.clone().starts_with("<b>") {
+    for item in data {
+        let line = line_format_fn(item);
+        msgs.push(head.clone());
+        if msgs.last_mut().unwrap().len() + line.len() > TELEGRAM_MAX_MSG_LEN {
+            msgs.push(line);
+        } else {
+            let msg = msgs.last_mut().unwrap();
+            msg.push('\n');
+            msg.push_str(&line);
+        }
+    }
+} else {
+msgs.push(head);
     for item in data {
         let line = line_format_fn(item);
         if msgs.last_mut().unwrap().len() + line.len() > TELEGRAM_MAX_MSG_LEN {
@@ -109,6 +123,7 @@ where
             msg.push_str(&line);
         }
     }
+}
     msgs
 }
 
